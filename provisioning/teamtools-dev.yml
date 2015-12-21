@@ -32,11 +32,29 @@
         - python-virtualenv
         - zlib1g-dev
 
-    - name: installing PEP8...
-      pip: name=pep8 virtualenv={{ virtualenv_path }}
-      when: not notinitial.stat.exists
-
     - name: installing git...
       sudo: yes
       apt: name=git-core update_cache=yes cache_valid_time=3600 state=present
       when: not notinitial.stat.exists
+
+    - name: creating virtualenv...
+      command: virtualenv {{ virtualenv_path }} -p python2.7 creates="{{ virtualenv_path }}"
+
+    - name: installing apps from github...
+      pip: name={{ item }} virtualenv={{ virtualenv_path }}
+      ignore_errors: yes
+      when: not notinitial.stat.exists
+      with_items:
+        - "{{ git_eggs }}"
+
+    - name: installing PEP8...
+      pip: name=pep8 virtualenv={{ virtualenv_path }}
+      when: not notinitial.stat.exists
+
+    - name: checking if team-tools project was already created...
+      stat: path="/vangrant/venv-tools/{{ project_name }}"
+      register: proj_created
+
+    - name: creating project...
+      command: "{{ virtualenv_path }}/bin/django-admin.py startproject {{ project_name }} chdir={{ virtualenv_path }}"
+      #when: not proj_created.stat.exists

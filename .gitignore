@@ -58,6 +58,9 @@ target/
 
 # Vagrant
 .vagrant
+venv-tools
 
 # Random generated passwords and strings
 provisioning/generated/
+
+.DS_Store
