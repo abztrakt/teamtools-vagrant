@@ -1,0 +1,3 @@
+virtualenv_path: "/vagrant/venv"
+project_name: "teamtoolsproj"
+git_eggs: '["git+https://github.com/abztrakt/uw-skilltree.git#egg=skill_tree", "git+https://github.com/abztrakt/labgeeks-chronos.git#egg=chronos"]'

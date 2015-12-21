@@ -1,0 +1,42 @@
+---
+- hosts: all
+  vars:
+    settings_secret_key: "{{ lookup('passowrd', playbook_dir + '/generated/secretkey chars=ascii_letters,digits,hexdigits,punctuation') }}"
+
+  tasks:
+    - name: checking if up or reload...
+      stat: path=/home/vagrant/notinitial
+      register: notinitial
+
+    - name: creating flag directory if initial up...
+      command: touch notinitial chdir=/home/vagrant/
+      when: not notinitial.stat.exists
+
+    - name: updating system packages...
+      sudo: yes
+      apt:
+        cache_valid_time=86400
+        update_cache=yes
+        upgrade=safe
+      ignore_errors: yes
+
+    - name: installing virtualenv...
+      sudo: yes
+      apt: pkg={{ item }} state=installed update_cache=yes
+      with_items:
+        - build-essential
+        - libxml2-dev
+        - libxslt1-dev
+        - libjpeg-dev
+        - python-dev
+        - python-virtualenv
+        - zlib1g-dev
+
+    - name: installing PEP8...
+      pip: name=pep8 virtualenv={{ virtualenv_path }}
+      when: not notinitial.stat.exists
+
+    - name: installing git...
+      sudo: yes
+      apt: name=git-core update_cache=yes cache_valid_time=3600 state=present
+      when: not notinitial.stat.exists
