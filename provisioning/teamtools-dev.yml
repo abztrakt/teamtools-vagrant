@@ -40,6 +40,10 @@
     - name: creating virtualenv...
       command: virtualenv {{ virtualenv_path }} -p python2.7 creates="{{ virtualenv_path }}"
 
+    - name: installing correct version of django...
+      pip: name=django version=1.4 state=present virtualenv={{ virtualenv_path }}
+      when: not notinitial.stat.exists
+
     - name: installing apps from github...
       pip: name={{ item }} virtualenv={{ virtualenv_path }}
       ignore_errors: yes
@@ -52,9 +56,29 @@
       when: not notinitial.stat.exists
 
     - name: checking if team-tools project was already created...
-      stat: path="/vangrant/venv-tools/{{ project_name }}"
+      stat: path=/vagrant/venv-tools/{{ project_name }}
       register: proj_created
 
     - name: creating project...
       command: "{{ virtualenv_path }}/bin/django-admin.py startproject {{ project_name }} chdir={{ virtualenv_path }}"
-      #when: not proj_created.stat.exists
+      when: not proj_created.stat.exists
+
+    - name: copying over the urls.py to each app..
+      sudo: yes
+      template: src=templates/{{ item.0 }} dest={{ item.1 }}/urls.py
+      with_together:
+        - "{{ urls }}"
+        - "{{ app_locations }}"
+
+    - name: copying over the settings.py to each app...
+      sudo: yes
+      template: src=templates/{{ item.0 }} dest={{ item.1 }}/settings.py
+      with_together:
+        - "{{ settings }}"
+        - "{{ app_locations }}"
+
+    - name: syncing database...
+      django_manage: command=syncdb app_path={{ virtualenv_path }}/{{ project_name }} virtualenv={{ virtualenv_path }}
+
+    - name: migrating app database...
+      django_manage: command=migrate app_path={{ virtualenv_path }}/{{ project_name }} virtualenv={{ virtualenv_path }}
