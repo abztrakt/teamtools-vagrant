@@ -27,6 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Schedman API - urls for APIs to compare shifts with for the late tool go here.
+SCHEDMAN_API = {}
+
 
 # Application definition
 
@@ -40,7 +43,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'skilltreeapp',
     'labgeeks_chronos',
-    'compressor',
+    'labgeeks_people',
+    'compressor==1.1.2',
     'south',
 )
 
@@ -110,3 +114,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = '/tmp/'
+
+# List of finder classes that know how to find static files in
+# various locations.
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'compressor.finders.CompressorFinder',
+)

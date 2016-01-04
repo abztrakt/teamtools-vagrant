@@ -6,4 +6,6 @@ from labgeeks_chronos import urls as chronos_urls
 urlpatterns = [
     url(r'^', include(skilltree_urls)),
     url(r'^chronos/', include(chronos_urls)),
+    url(r'^accounts/login/$', 'skilltreeapp.views.pages.tools_login'),
+    url(r'^accounts/logout/', 'skilltreeapp.views.pages.tools_logout'),
 ]

@@ -40,6 +40,7 @@
     - name: creating virtualenv...
       command: virtualenv {{ virtualenv_path }} -p python2.7 creates="{{ virtualenv_path }}"
 
+      #TODO: Take this out when version is pinned in apps
     - name: installing correct version of django...
       pip: name=django version=1.4 state=present virtualenv={{ virtualenv_path }}
       when: not notinitial.stat.exists
