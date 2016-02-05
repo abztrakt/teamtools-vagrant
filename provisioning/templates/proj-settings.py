@@ -44,7 +44,8 @@ INSTALLED_APPS = (
     'skilltreeapp',
     'labgeeks_chronos',
     'labgeeks_people',
-    'compressor==1.1.2',
+    'labgeeks_hermes',
+    'compressor',
     'south',
 )
 
@@ -122,4 +123,10 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
     'compressor.finders.CompressorFinder',
+)
+
+COMPRESS_ENABLED = True
+
+COMPRESS_PRECOMPILERS = (
+   ('text/less', 'lessc {infile} {outfile}'),
 )

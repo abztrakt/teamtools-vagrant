@@ -1,6 +1,6 @@
 virtualenv_path: '/vagrant/venv-tools'
 project_name: "teamtoolsproj"
-git_eggs: '["git+https://github.com/abztrakt/uw-skilltree.git#egg=skill_tree", "git+https://github.com/abztrakt/labgeeks-people.git#egg=people", "git+https://github.com/abztrakt/labgeeks-chronos.git#egg=chronos"]'
+git_eggs: '["git+https://github.com/abztrakt/uw-skilltree.git#egg=skill_tree", "git+https://github.com/abztrakt/labgeeks-people.git#egg=people", "git+https://github.com/abztrakt/labgeeks-chronos.git#egg=chronos","git+https://github.com/abztrakt/labgeeks-hermes.git#egg=hermes"]'
 app_locations: ["/vagrant/venv-tools/src/skill-tree/skilltreeapp", "/vagrant/venv-tools/src/chronos/labgeeks_chronos", "/vagrant/venv-tools/teamtoolsproj/teamtoolsproj"]
 urls: ["skilltree-urls.py", "chronos-urls.py", "proj-urls.py"]
 settings: ["skilltree-settings.py", "chronos-settings.py", "proj-settings.py"]

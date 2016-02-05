@@ -20,6 +20,16 @@
         upgrade=safe
       ignore_errors: yes
 
+    - name: Getting node source...
+      get_url: url=https://deb.nodesource.com/setup_4.x dest=/home/vagrant/nodejs.sh
+
+    - name: Change script permissions...
+      file: path=/home/vagrant/nodejs.sh mode=0777
+
+    - name: Execute node source...
+      sudo: yes
+      command: /bin/bash nodejs.sh chdir=/home/vagrant
+
     - name: installing virtualenv...
       sudo: yes
       apt: pkg={{ item }} state=installed update_cache=yes
@@ -31,6 +41,11 @@
         - python-dev
         - python-virtualenv
         - zlib1g-dev
+        - nodejs
+
+    - name: installing less...
+      sudo: yes
+      npm: name=less global=yes
 
     - name: installing git...
       sudo: yes
@@ -48,7 +63,7 @@
     - name: installing apps from github...
       pip: name={{ item }} virtualenv={{ virtualenv_path }}
       ignore_errors: yes
-      when: not notinitial.stat.exists
+      #when: not notinitial.stat.exists
       with_items:
         - "{{ git_eggs }}"
 
