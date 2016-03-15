@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     'labgeeks_chronos',
     'labgeeks_people',
     'labgeeks_hermes',
+    'punchclock',
     'compressor',
     'south',
 )
@@ -65,7 +66,7 @@ ROOT_URLCONF = 'teamtoolsproj.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR,'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
