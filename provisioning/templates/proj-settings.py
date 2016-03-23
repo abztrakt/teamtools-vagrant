@@ -50,6 +50,8 @@ INSTALLED_APPS = (
     'south',
 )
 
+SITE_ID = 1
+
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

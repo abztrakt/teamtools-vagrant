@@ -10,4 +10,5 @@ urlpatterns = [
     url(r'^punchclock/', include(punchclock_urls)),
     url(r'^accounts/login/$', 'skilltreeapp.views.pages.tools_login'),
     url(r'^accounts/logout/', 'skilltreeapp.views.pages.tools_logout'),
+    url(r'^admin/', include(admin.site.urls)),
 ]
