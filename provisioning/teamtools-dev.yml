@@ -20,6 +20,16 @@
         upgrade=safe
       ignore_errors: yes
 
+    - name: Getting node source...
+      get_url: url=https://deb.nodesource.com/setup_4.x dest=/home/vagrant/nodejs.sh
+
+    - name: Change script permissions...
+      file: path=/home/vagrant/nodejs.sh mode=0777
+
+    - name: Execute node source...
+      sudo: yes
+      command: /bin/bash nodejs.sh chdir=/home/vagrant
+
     - name: installing virtualenv...
       sudo: yes
       apt: pkg={{ item }} state=installed update_cache=yes
@@ -31,6 +41,11 @@
         - python-dev
         - python-virtualenv
         - zlib1g-dev
+        - nodejs
+
+    - name: installing less...
+      sudo: yes
+      npm: name=less global=yes
 
     - name: installing git...
       sudo: yes
@@ -40,10 +55,15 @@
     - name: creating virtualenv...
       command: virtualenv {{ virtualenv_path }} -p python2.7 creates="{{ virtualenv_path }}"
 
+      #TODO: Take this out when version is pinned in apps
+    - name: installing correct version of django...
+      pip: name=django version=1.4 state=present virtualenv={{ virtualenv_path }}
+      when: not notinitial.stat.exists
+
     - name: installing apps from github...
       pip: name={{ item }} virtualenv={{ virtualenv_path }}
       ignore_errors: yes
-      when: not notinitial.stat.exists
+      #when: not notinitial.stat.exists
       with_items:
         - "{{ git_eggs }}"
 
@@ -52,9 +72,29 @@
       when: not notinitial.stat.exists
 
     - name: checking if team-tools project was already created...
-      stat: path="/vangrant/venv-tools/{{ project_name }}"
+      stat: path=/vagrant/venv-tools/{{ project_name }}
       register: proj_created
 
     - name: creating project...
       command: "{{ virtualenv_path }}/bin/django-admin.py startproject {{ project_name }} chdir={{ virtualenv_path }}"
-      #when: not proj_created.stat.exists
+      when: not proj_created.stat.exists
+
+    - name: copying over the urls.py to each app..
+      sudo: yes
+      template: src=templates/{{ item.0 }} dest={{ item.1 }}/urls.py
+      with_together:
+        - "{{ urls }}"
+        - "{{ app_locations }}"
+
+    - name: copying over the settings.py to each app...
+      sudo: yes
+      template: src=templates/{{ item.0 }} dest={{ item.1 }}/settings.py
+      with_together:
+        - "{{ settings }}"
+        - "{{ app_locations }}"
+
+    - name: syncing database...
+      django_manage: command=syncdb app_path={{ virtualenv_path }}/{{ project_name }} virtualenv={{ virtualenv_path }}
+
+    - name: migrating app database...
+      django_manage: command=migrate app_path={{ virtualenv_path }}/{{ project_name }} virtualenv={{ virtualenv_path }}
